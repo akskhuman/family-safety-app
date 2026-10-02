@@ -43,17 +43,31 @@
           font-weight: 700;
           color: #f8fafc;
         }
+        .header-title p {
+          font-size: 0.8rem;
+          color: var(--text-muted);
+        }
         .status-badge {
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          padding: 6px 12px;
+          padding: 6px 14px;
           border-radius: 9999px;
           font-size: 0.8rem;
           font-weight: 600;
           background: rgba(16, 185, 129, 0.15);
           color: #34d399;
           border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .status-badge.error {
+          background: rgba(239, 68, 68, 0.15);
+          color: var(--danger);
+          border-color: rgba(239, 68, 68, 0.3);
+        }
+        .status-badge.warn {
+          background: rgba(245, 158, 11, 0.15);
+          color: var(--warning);
+          border-color: rgba(245, 158, 11, 0.3);
         }
         .container {
           max-width: 1400px;
@@ -82,6 +96,10 @@
           justify-content: space-between;
           align-items: center;
         }
+        .card-title {
+          font-weight: 600;
+          color: #f1f5f9;
+        }
         .card-body { padding: 20px; flex: 1; }
         .video-wrapper {
           position: relative;
@@ -93,6 +111,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
+          border: 1px solid var(--border);
         }
         canvas { width: 100%; height: 100%; object-fit: contain; background: #000; }
         .video-overlay {
@@ -103,6 +122,7 @@
           border-radius: 6px;
           font-size: 0.75rem;
           color: #94a3b8;
+          border: 1px solid var(--border);
         }
         .stats-overlay {
           position: absolute;
@@ -114,6 +134,7 @@
           color: #38bdf8;
           display: flex;
           gap: 12px;
+          border: 1px solid var(--border);
         }
         .btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
         button {
@@ -129,18 +150,45 @@
           gap: 8px;
         }
         .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
         .btn-secondary { background: #334155; color: white; }
+        .btn-secondary:hover { background: #475569; }
         .btn-danger { background: #dc2626; color: white; }
+        .btn-danger:hover { background: #b91c1c; }
         .input-group { margin-bottom: 14px; }
-        label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
         input {
           width: 100%; padding: 10px 14px; background: #0b1329;
           border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.9rem;
+          outline: none;
         }
+        input:focus { border-color: var(--primary); }
         .terminal {
           background: #070d1d; border: 1px solid var(--border); border-radius: 6px;
           padding: 12px; font-family: monospace; font-size: 0.75rem; height: 180px; overflow-y: auto; color: #38bdf8;
+          line-height: 1.5;
         }
+        #map {
+          height: 220px;
+          border-radius: 8px;
+          border: 1px solid var(--border);
+          margin-top: 14px;
+        }
+        .telemetry-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+          margin-top: 14px;
+        }
+        .telemetry-box {
+          background: #0b1329;
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 10px;
+          text-align: center;
+        }
+        .telemetry-box span { display: block; font-size: 0.75rem; color: var(--text-muted); }
+        .telemetry-box strong { font-size: 1.1rem; color: #38bdf8; }
     </style>
 </head>
 <body>
@@ -150,8 +198,8 @@
         <h1>Family Safety - Stream Hub</h1>
         <p>Option 1: Low-Latency WebSocket Media Relay (4G/5G Ready)</p>
     </div>
-    <div id="connectionStatus" class="status-badge">
-        <span id="statusText">Ready</span>
+    <div id="connectionStatus" class="status-badge warn">
+        <span id="statusText">Connecting...</span>
     </div>
 </header>
 
@@ -168,6 +216,7 @@
                 <div class="stats-overlay">
                     <span id="fpsTag">0 FPS</span>
                     <span id="bandwidthTag">0 KB/s</span>
+                    <span id="pingTag">Ping: --ms</span>
                 </div>
             </div>
 
@@ -185,31 +234,57 @@
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header">
-            <span class="card-title">Relay Settings</span>
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Relay Settings</span>
+                <span id="deviceOnlineBadge" class="status-badge warn" style="font-size: 0.75rem;">Device Offline</span>
+            </div>
+            <div class="card-body">
+                <div class="input-group">
+                    <label>Target Device ID</label>
+                    <input type="text" id="wsDeviceIdInput" value="child_device_001" />
+                </div>
+                <div class="input-group">
+                    <label>Relay URL</label>
+                    <input type="text" id="wsServerUrlInput" placeholder="wss://.../ws" />
+                </div>
+                <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="reconnectWebSocket()">
+                    Connect / Reconnect
+                </button>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="input-group">
-                <label>Target Device ID</label>
-                <input type="text" id="wsDeviceIdInput" value="child_device_001" />
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Live Device Location & Status</span>
             </div>
-            <div class="input-group">
-                <label>Relay URL</label>
-                <input type="text" id="wsServerUrlInput" />
+            <div class="card-body">
+                <div id="map"></div>
+                <div class="telemetry-row">
+                    <div class="telemetry-box">
+                        <span>Battery</span>
+                        <strong id="valBattery">--%</strong>
+                    </div>
+                    <div class="telemetry-box">
+                        <span>GPS Accuracy</span>
+                        <strong id="valAccuracy">-- m</strong>
+                    </div>
+                </div>
             </div>
-            <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="reconnectWebSocket()">
-                Connect / Reconnect
-            </button>
         </div>
     </div>
 </div>
 
 <script>
+    const DEFAULT_CLOUD_RELAY = 'wss://ais-dev-vfzytoext2ntavlnmspwe3-938514856930.asia-southeast1.run.app/ws';
     let ws = null;
+    let wsReconnectTimer = null;
     let wsCanvas = document.getElementById('wsCanvas');
     let wsCtx = wsCanvas.getContext('2d');
-    let frames = 0, bytes = 0, lastStats = Date.now();
+    let frames = 0, bytes = 0, lastStats = Date.now(), pingTime = 0;
+
+    let map = null, marker = null;
 
     function log(msg) {
       const consoleEl = document.getElementById("logConsole");
@@ -219,65 +294,156 @@
       consoleEl.scrollTop = consoleEl.scrollHeight;
     }
 
+    function initUrl() {
+      const savedUrl = localStorage.getItem('family_safety_ws_url');
+      const savedDevice = localStorage.getItem('family_safety_device_id');
+      if (savedDevice) document.getElementById('wsDeviceIdInput').value = savedDevice;
+
+      if (savedUrl && savedUrl.startsWith('ws')) {
+        document.getElementById('wsServerUrlInput').value = savedUrl;
+        return;
+      }
+
+      // If running on GitHub Pages or custom frontend, default to Cloud Run relay
+      if (window.location.host.includes('github.io') || window.location.host.includes('localhost:5173')) {
+        document.getElementById('wsServerUrlInput').value = DEFAULT_CLOUD_RELAY;
+      } else {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        document.getElementById('wsServerUrlInput').value = `${protocol}//${window.location.host}/ws`;
+      }
+    }
+
     function reconnectWebSocket() {
+      if (wsReconnectTimer) {
+        clearTimeout(wsReconnectTimer);
+        wsReconnectTimer = null;
+      }
+
       const deviceId = document.getElementById('wsDeviceIdInput').value.trim() || 'child_device_001';
       let wsUrl = document.getElementById('wsServerUrlInput').value.trim();
-      if (!wsUrl) {
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        wsUrl = `${protocol}//${window.location.host || 'localhost:3000'}/ws`;
+
+      if (!wsUrl || wsUrl.includes('github.io')) {
+        wsUrl = DEFAULT_CLOUD_RELAY;
         document.getElementById('wsServerUrlInput').value = wsUrl;
       }
 
-      if (ws) { try { ws.close(); } catch(e) {} }
+      try {
+        localStorage.setItem('family_safety_ws_url', wsUrl);
+        localStorage.setItem('family_safety_device_id', deviceId);
+      } catch (e) {}
 
-      const fullUrl = `${wsUrl}?deviceId=${deviceId}&role=viewer`;
+      if (ws) {
+        try { ws.close(); } catch(e) {}
+        ws = null;
+      }
+
+      const cleanBase = wsUrl.replace(/\/+$/, '');
+      const fullUrl = cleanBase.includes('?')
+        ? `${cleanBase}&deviceId=${deviceId}&role=viewer`
+        : `${cleanBase}?deviceId=${deviceId}&role=viewer`;
+
       log(`Connecting to: ${fullUrl}`);
+      document.getElementById('statusText').innerText = 'Connecting...';
+      document.getElementById('connectionStatus').className = 'status-badge warn';
 
-      ws = new WebSocket(fullUrl);
-      ws.binaryType = 'arraybuffer';
+      try {
+        ws = new WebSocket(fullUrl);
+        ws.binaryType = 'arraybuffer';
 
-      ws.onopen = () => {
-        log("WebSocket connected!");
-        document.getElementById('statusText').innerText = 'Connected';
-        ws.send(JSON.stringify({ type: 'register', role: 'viewer', deviceId }));
-      };
+        ws.onopen = () => {
+          log("⚡ WebSocket Relay connected! Subscribed to device: " + deviceId);
+          document.getElementById('statusText').innerText = 'Relay Online';
+          document.getElementById('connectionStatus').className = 'status-badge';
+          ws.send(JSON.stringify({ type: 'register', role: 'viewer', deviceId }));
+          pingTime = Date.now();
+          ws.send(JSON.stringify({ type: 'ping', timestamp: pingTime }));
+        };
 
-      ws.onmessage = async (event) => {
-        if (event.data instanceof ArrayBuffer) {
-          frames++;
-          bytes += event.data.byteLength;
+        ws.onmessage = async (event) => {
+          if (event.data instanceof ArrayBuffer) {
+            frames++;
+            bytes += event.data.byteLength;
+            try {
+              const blob = new Blob([event.data], { type: 'image/jpeg' });
+              const bitmap = await createImageBitmap(blob);
+              if (wsCanvas.width !== bitmap.width || wsCanvas.height !== bitmap.height) {
+                wsCanvas.width = bitmap.width;
+                wsCanvas.height = bitmap.height;
+                document.getElementById('videoResolutionTag').innerText = `Live: ${bitmap.width}x${bitmap.height}`;
+              }
+              wsCtx.drawImage(bitmap, 0, 0);
+              bitmap.close();
+            } catch (e) {}
+            return;
+          }
+
           try {
-            const blob = new Blob([event.data], { type: 'image/jpeg' });
-            const bitmap = await createImageBitmap(blob);
-            if (wsCanvas.width !== bitmap.width || wsCanvas.height !== bitmap.height) {
-              wsCanvas.width = bitmap.width;
-              wsCanvas.height = bitmap.height;
-              document.getElementById('videoResolutionTag').innerText = `Live: ${bitmap.width}x${bitmap.height}`;
+            const msg = JSON.parse(event.data);
+            if (msg.type === 'init_state') {
+              setDeviceOnline(msg.streamerOnline);
+              if (msg.lastTelemetry) updateTelemetry(msg.lastTelemetry);
+            } else if (msg.type === 'streamer_connected') {
+              log(`Child device [${msg.deviceId}] is now ONLINE!`);
+              setDeviceOnline(true);
+            } else if (msg.type === 'streamer_disconnected') {
+              log(`Child device [${msg.deviceId}] disconnected.`);
+              setDeviceOnline(false);
+              document.getElementById('streamStateBadge').innerText = 'Stream: Idle';
+            } else if (msg.type === 'status') {
+              document.getElementById('streamStateBadge').innerText = `Stream: ${msg.streamState}`;
+              log(`Device stream status: ${msg.streamState}`);
+            } else if (msg.type === 'telemetry') {
+              updateTelemetry(msg);
+            } else if (msg.type === 'pong') {
+              const rtt = Date.now() - pingTime;
+              document.getElementById('pingTag').innerText = `Ping: ${rtt}ms`;
             }
-            wsCtx.drawImage(bitmap, 0, 0);
-            bitmap.close();
           } catch (e) {}
-          return;
-        }
+        };
 
-        try {
-          const msg = JSON.parse(event.data);
-          if (msg.type === 'streamer_connected') log(`Device [${msg.deviceId}] is online!`);
-          if (msg.type === 'status') document.getElementById('streamStateBadge').innerText = `Stream: ${msg.streamState}`;
-        } catch (e) {}
-      };
+        ws.onclose = () => {
+          log("Relay disconnected. Reconnecting in 3s...");
+          document.getElementById('statusText').innerText = 'Relay Offline';
+          document.getElementById('connectionStatus').className = 'status-badge error';
+          setDeviceOnline(false);
+          wsReconnectTimer = setTimeout(reconnectWebSocket, 3000);
+        };
 
-      ws.onclose = () => {
-        log("Disconnected. Reconnecting in 3s...");
-        document.getElementById('statusText').innerText = 'Offline';
-        setTimeout(reconnectWebSocket, 3000);
-      };
+        ws.onerror = () => {
+          log("WebSocket error encountered.");
+        };
+      } catch (err) {
+        log("Connection error: " + err.message);
+      }
+    }
+
+    function setDeviceOnline(isOnline) {
+      const badge = document.getElementById('deviceOnlineBadge');
+      if (isOnline) {
+        badge.innerText = 'Device Online';
+        badge.className = 'status-badge';
+      } else {
+        badge.innerText = 'Device Offline';
+        badge.className = 'status-badge warn';
+      }
     }
 
     function sendCommand(action) {
       if (ws && ws.readyState === WebSocket.OPEN) {
+        const deviceId = document.getElementById('wsDeviceIdInput').value.trim() || 'child_device_001';
         log(`Sending command: ${action}`);
-        ws.send(JSON.stringify({ type: 'command', action, timestamp: Date.now() }));
+        ws.send(JSON.stringify({ type: 'command', action, targetDeviceId: deviceId, timestamp: Date.now() }));
+      } else {
+        log("⚠️ Cannot send command: Relay not connected.");
+      }
+    }
+
+    function updateTelemetry(data) {
+      if (data.battery !== undefined) document.getElementById('valBattery').innerText = `${data.battery}%`;
+      if (data.accuracy !== undefined) document.getElementById('valAccuracy').innerText = `${Math.round(data.accuracy)} m`;
+      if (data.lat !== undefined && data.lng !== undefined && map && marker) {
+        marker.setLatLng([data.lat, data.lng]);
+        map.panTo([data.lat, data.lng]);
       }
     }
 
@@ -292,8 +458,13 @@
     }, 1000);
 
     window.addEventListener("DOMContentLoaded", () => {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      document.getElementById('wsServerUrlInput').value = `${protocol}//${window.location.host || 'localhost:3000'}/ws`;
+      initUrl();
+
+      // Init Map
+      map = L.map('map').setView([37.7749, -122.4194], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+      marker = L.marker([37.7749, -122.4194]).addTo(map);
+
       reconnectWebSocket();
     });
 </script>
