@@ -106,7 +106,7 @@ fun FamilySafetyDashboard(onRegisterLauncher: (() -> Unit) -> Unit) {
     }
 
     var wsUrl by remember {
-        mutableStateOf(sharedPrefs.getString("ws_url", "wss://ais-dev-vfzytoext2ntavlnmspwe3-938514856930.asia-southeast1.run.app/ws") ?: "wss://ais-dev-vfzytoext2ntavlnmspwe3-938514856930.asia-southeast1.run.app/ws")
+        mutableStateOf("wss://ais-dev-vfzytoext2ntavlnmspwe3-938514856930.asia-southeast1.run.app/ws")
     }
 
     var isWsConnected by remember { mutableStateOf(false) }
