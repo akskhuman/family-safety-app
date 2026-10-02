@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Family Safety - Stream & Location Monitor</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        :root {
+          --bg: #0b1329;
+          --card-bg: #152243;
+          --border: #233560;
+          --text: #e2e8f0;
+          --text-muted: #94a3b8;
+          --primary: #0284c7;
+          --primary-hover: #0369a1;
+          --success: #10b981;
+          --danger: #ef4444;
+          --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          background: var(--bg);
+          color: var(--text);
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+        }
+        header {
+          background: var(--card-bg);
+          border-bottom: 1px solid var(--border);
+          padding: 16px 24px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+        .header-title h1 {
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: #f8fafc;
+        }
+        .status-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          border-radius: 9999px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          background: rgba(16, 185, 129, 0.15);
+          color: #34d399;
+          border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .container {
+          max-width: 1400px;
+          margin: 0 auto;
+          padding: 24px;
+          width: 100%;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+        @media (min-width: 1024px) {
+          .container { grid-template-columns: 3fr 2fr; }
+        }
+        .card {
+          background: var(--card-bg);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+        }
+        .card-header {
+          padding: 16px 20px;
+          border-bottom: 1px solid var(--border);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .card-body { padding: 20px; flex: 1; }
+        .video-wrapper {
+          position: relative;
+          width: 100%;
+          height: 480px;
+          background: #050b18;
+          border-radius: 8px;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        canvas { width: 100%; height: 100%; object-fit: contain; background: #000; }
+        .video-overlay {
+          position: absolute;
+          top: 12px; left: 12px;
+          background: rgba(15, 23, 42, 0.85);
+          padding: 6px 12px;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          color: #94a3b8;
+        }
+        .stats-overlay {
+          position: absolute;
+          top: 12px; right: 12px;
+          background: rgba(15, 23, 42, 0.85);
+          padding: 6px 12px;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          color: #38bdf8;
+          display: flex;
+          gap: 12px;
+        }
+        .btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+        button {
+          padding: 10px 16px;
+          border-radius: 8px;
+          font-size: 0.85rem;
+          font-weight: 600;
+          cursor: pointer;
+          border: none;
+          transition: all 0.2s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: #334155; color: white; }
+        .btn-danger { background: #dc2626; color: white; }
+        .input-group { margin-bottom: 14px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+        input {
+          width: 100%; padding: 10px 14px; background: #0b1329;
+          border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.9rem;
+        }
+        .terminal {
+          background: #070d1d; border: 1px solid var(--border); border-radius: 6px;
+          padding: 12px; font-family: monospace; font-size: 0.75rem; height: 180px; overflow-y: auto; color: #38bdf8;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-title">
+        <h1>Family Safety - Stream Hub</h1>
+        <p>Option 1: Low-Latency WebSocket Media Relay (4G/5G Ready)</p>
+    </div>
+    <div id="connectionStatus" class="status-badge">
+        <span id="statusText">Ready</span>
+    </div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Live Media Feed</span>
+            <span id="streamStateBadge" style="font-size: 0.8rem; color: #94a3b8;">Stream: Idle</span>
+        </div>
+        <div class="card-body">
+            <div class="video-wrapper">
+                <canvas id="wsCanvas" width="720" height="1280"></canvas>
+                <div class="video-overlay" id="videoResolutionTag">Option 1 WebSocket: Ready</div>
+                <div class="stats-overlay">
+                    <span id="fpsTag">0 FPS</span>
+                    <span id="bandwidthTag">0 KB/s</span>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-primary" onclick="sendCommand('START_SCREEN')">Request Screen Share</button>
+                <button class="btn-secondary" onclick="sendCommand('START_CAMERA_FRONT')">Front Camera</button>
+                <button class="btn-secondary" onclick="sendCommand('START_CAMERA_BACK')">Rear Camera</button>
+                <button class="btn-danger" onclick="sendCommand('STOP_STREAM')">Stop Stream</button>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <h4 style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 8px;">Diagnostics Log</h4>
+                <div class="terminal" id="logConsole"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Relay Settings</span>
+        </div>
+        <div class="card-body">
+            <div class="input-group">
+                <label>Target Device ID</label>
+                <input type="text" id="wsDeviceIdInput" value="child_device_001" />
+            </div>
+            <div class="input-group">
+                <label>Relay URL</label>
+                <input type="text" id="wsServerUrlInput" />
+            </div>
+            <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="reconnectWebSocket()">
+                Connect / Reconnect
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let ws = null;
+    let wsCanvas = document.getElementById('wsCanvas');
+    let wsCtx = wsCanvas.getContext('2d');
+    let frames = 0, bytes = 0, lastStats = Date.now();
+
+    function log(msg) {
+      const consoleEl = document.getElementById("logConsole");
+      const d = document.createElement("div");
+      d.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      consoleEl.appendChild(d);
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    function reconnectWebSocket() {
+      const deviceId = document.getElementById('wsDeviceIdInput').value.trim() || 'child_device_001';
+      let wsUrl = document.getElementById('wsServerUrlInput').value.trim();
+      if (!wsUrl) {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        wsUrl = `${protocol}//${window.location.host || 'localhost:3000'}/ws`;
+        document.getElementById('wsServerUrlInput').value = wsUrl;
+      }
+
+      if (ws) { try { ws.close(); } catch(e) {} }
+
+      const fullUrl = `${wsUrl}?deviceId=${deviceId}&role=viewer`;
+      log(`Connecting to: ${fullUrl}`);
+
+      ws = new WebSocket(fullUrl);
+      ws.binaryType = 'arraybuffer';
+
+      ws.onopen = () => {
+        log("WebSocket connected!");
+        document.getElementById('statusText').innerText = 'Connected';
+        ws.send(JSON.stringify({ type: 'register', role: 'viewer', deviceId }));
+      };
+
+      ws.onmessage = async (event) => {
+        if (event.data instanceof ArrayBuffer) {
+          frames++;
+          bytes += event.data.byteLength;
+          try {
+            const blob = new Blob([event.data], { type: 'image/jpeg' });
+            const bitmap = await createImageBitmap(blob);
+            if (wsCanvas.width !== bitmap.width || wsCanvas.height !== bitmap.height) {
+              wsCanvas.width = bitmap.width;
+              wsCanvas.height = bitmap.height;
+              document.getElementById('videoResolutionTag').innerText = `Live: ${bitmap.width}x${bitmap.height}`;
+            }
+            wsCtx.drawImage(bitmap, 0, 0);
+            bitmap.close();
+          } catch (e) {}
+          return;
+        }
+
+        try {
+          const msg = JSON.parse(event.data);
+          if (msg.type === 'streamer_connected') log(`Device [${msg.deviceId}] is online!`);
+          if (msg.type === 'status') document.getElementById('streamStateBadge').innerText = `Stream: ${msg.streamState}`;
+        } catch (e) {}
+      };
+
+      ws.onclose = () => {
+        log("Disconnected. Reconnecting in 3s...");
+        document.getElementById('statusText').innerText = 'Offline';
+        setTimeout(reconnectWebSocket, 3000);
+      };
+    }
+
+    function sendCommand(action) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        log(`Sending command: ${action}`);
+        ws.send(JSON.stringify({ type: 'command', action, timestamp: Date.now() }));
+      }
+    }
+
+    setInterval(() => {
+      const now = Date.now();
+      const elapsed = (now - lastStats) / 1000;
+      if (elapsed >= 1) {
+        document.getElementById('fpsTag').innerText = `${Math.round(frames / elapsed)} FPS`;
+        document.getElementById('bandwidthTag').innerText = `${Math.round((bytes / 1024) / elapsed)} KB/s`;
+        frames = 0; bytes = 0; lastStats = now;
+      }
+    }, 1000);
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      document.getElementById('wsServerUrlInput').value = `${protocol}//${window.location.host || 'localhost:3000'}/ws`;
+      reconnectWebSocket();
+    });
+</script>
+</body>
+</html>
