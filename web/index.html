@@ -338,7 +338,7 @@
       }
 
       const cleanBase = wsUrl.replace(/\/+$/, '');
-      const fullUrl = cleanBase.includes('?')
+      const fullUrl = cleanBase.includes('?') 
         ? `${cleanBase}&deviceId=${deviceId}&role=viewer`
         : `${cleanBase}?deviceId=${deviceId}&role=viewer`;
 
