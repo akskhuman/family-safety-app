@@ -1,0 +1,22 @@
+# Node dependencies & build artifacts
+node_modules/
+dist/
+build/
+coverage/
+*.log
+.DS_Store
+
+# Environment & local secrets
+.env*
+!.env.example
+
+# Android Studio & Gradle
+.gradle/
+app/build/
+local.properties
+*.iml
+.idea/
+.vscode/
+captures/
+.externalNativeBuild/
+.cxx/

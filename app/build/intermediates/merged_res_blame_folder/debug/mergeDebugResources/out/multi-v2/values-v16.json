@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.personal.familysafety.app-mergeDebugResources-46:/values-v16/values-v16.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\AKSPC\\.gradle\\caches\\transforms-3\\bcc5a72550c482668fa99c7a98664b62\\transformed\\core-1.12.0\\res\\values-v16\\values-v16.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "65",
+                        "endOffsets": "116"
+                    }
+                }
+            ]
+        }
+    ]
+}

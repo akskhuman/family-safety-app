@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.3.2" type="conditional_incidents">
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="Unnecessary; SDK_INT is always >= 34">
+        <fix-replace
+            description="Delete tools:targetApi"
+            replacement="">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
+                startOffset="2318"
+                endOffset="2338"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
+            line="43"
+            column="9"
+            startOffset="2318"
+            endLine="43"
+            endColumn="29"
+            endOffset="2338"/>
+        <map>
+            <condition minGE="fffffffe00000000"/>
+        </map>
+    </incident>
+
+    <incident
+        id="InlinedApi"
+        severity="warning"
+        message="">
+        <fix-data minSdk="fffffffffe000000" requiresApi="fffffffff0000000"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/personal/familysafety/services/AssistanceMediaService.kt"
+            line="93"
+            column="29"
+            startOffset="3655"
+            endLine="93"
+            endColumn="81"
+            endOffset="3707"/>
+        <map>
+            <api-levels id="minSdk"
+                value="fffffffffe000000"/>
+            <api-levels id="requiresApi"
+                value="fffffffff0000000"/>
+            <entry
+                name="message"
+                string="Field requires API level 29 (current min is %1$s): `android.content.pm.ServiceInfo#FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION`"/>
+        </map>
+    </incident>
+
+    <incident
+        id="InlinedApi"
+        severity="warning"
+        message="">
+        <fix-data minSdk="fffffffffe000000" requiresApi="ffffffffe0000000"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/personal/familysafety/services/AssistanceMediaService.kt"
+            line="113"
+            column="29"
+            startOffset="4492"
+            endLine="113"
+            endColumn="71"
+            endOffset="4534"/>
+        <map>
+            <api-levels id="minSdk"
+                value="fffffffffe000000"/>
+            <api-levels id="requiresApi"
+                value="ffffffffe0000000"/>
+            <entry
+                name="message"
+                string="Field requires API level 30 (current min is %1$s): `android.content.pm.ServiceInfo#FOREGROUND_SERVICE_TYPE_CAMERA`"/>
+        </map>
+    </incident>
+
+</incidents>

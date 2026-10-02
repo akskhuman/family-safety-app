@@ -1,0 +1,5 @@
+-keep class org.webrtc.** { *; }
+-dontwarn org.webrtc.**
+-keep class com.google.firebase.** { *; }
+-dontwarn com.google.firebase.**
+-keep class com.personal.familysafety.models.** { *; }

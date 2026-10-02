@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.3.2" type="partial_results">
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="com.personal.familysafety.MainActivity"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="UnsafeImplicitIntentLaunch">
+            <map id="actionsRegisteredNonExported">
+                <entry
+                    name="com.personal.familysafety.PROMPT_SCREEN_SHARE (used to send a broadcast)"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="UnusedResources">
+        <location id="R.string.notification_channel_name"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="3"
+            column="13"
+            startOffset="85"
+            endLine="3"
+            endColumn="45"
+            endOffset="117"/>
+        <location id="R.drawable.ic_stat_safety"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/ic_stat_safety.xml"
+            line="1"
+            column="1"
+            startOffset="0"
+            endLine="9"
+            endColumn="10"
+            endOffset="399"/>
+        <location id="R.string.notification_channel_desc"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="4"
+            column="13"
+            startOffset="163"
+            endLine="4"
+            endColumn="45"
+            endOffset="195"/>
+        <entry
+            name="model"
+            string="drawable[ic_stat_safety(D)],string[app_name(U),notification_channel_name(D),notification_channel_desc(D)],style[Theme_FamilySafetyClient(U)];;;;"/>
+    </map>
+
+</incidents>

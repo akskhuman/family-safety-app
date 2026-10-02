@@ -1,0 +1,142 @@
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\java\com\personal\familysafety\services\AssistanceMediaService.kt:93: Warning: Field requires API level 29 (current min is 26): android.content.pm.ServiceInfo#FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION [InlinedApi]
+                            ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION,
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\java\com\personal\familysafety\services\AssistanceMediaService.kt:113: Warning: Field requires API level 30 (current min is 26): android.content.pm.ServiceInfo#FOREGROUND_SERVICE_TYPE_CAMERA [InlinedApi]
+                var types = ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "InlinedApi":
+   This check scans through all the Android API field references in the
+   application and flags certain constants, such as static final integers and
+   Strings, which were introduced in later versions. These will actually be
+   copied into the class files rather than being referenced, which means that
+   the value is available even when running on older devices. In some cases
+   that's fine, and in other cases it can result in a runtime crash or
+   incorrect behavior. It depends on the context, so consider the code
+   carefully and decide whether it's safe and can be suppressed or whether the
+   code needs to be guarded.
+
+   If you really want to use this API and don't need to support older devices
+   just set the minSdkVersion in your build.gradle or AndroidManifest.xml
+   files.
+
+   If your code is deliberately accessing newer APIs, and you have ensured
+   (e.g. with conditional execution) that this code will only ever be called
+   on a supported platform, then you can annotate your class or method with
+   the @TargetApi annotation specifying the local minimum SDK to apply, such
+   as @TargetApi(11), such that this check considers 11 rather than your
+   manifest file's minimum SDK as the required API level.
+
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\build.gradle.kts:14: Warning: Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details. [OldTargetApi]
+        targetSdk = 34
+        ~~~~~~~~~~~~~~
+
+   Explanation for issues of type "OldTargetApi":
+   When your application runs on a version of Android that is more recent than
+   your targetSdkVersion specifies that it has been tested with, various
+   compatibility modes kick in. This ensures that your application continues
+   to work, but it may look out of place. For example, if the targetSdkVersion
+   is less than 14, your app may get an option button in the UI.
+
+   To fix this issue, set the targetSdkVersion to the highest available value.
+   Then test your app to make sure everything works correctly. You may want to
+   consult the compatibility notes to see what changes apply to each version
+   you are adding support for:
+   https://developer.android.com/reference/android/os/Build.VERSION_CODES.html
+   as well as follow this guide:
+   https://developer.android.com/distribute/best-practices/develop/target-sdk.
+   html
+
+   https://developer.android.com/distribute/best-practices/develop/target-sdk.html
+
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:49: Warning: Redundant label can be removed [RedundantLabel]
+            android:label="@string/app_name"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "RedundantLabel":
+   When an activity does not have a label attribute, it will use the one from
+   the application tag. Since the application has already specified the same
+   label, the label on this activity can be omitted.
+
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\build.gradle.kts:55: Warning: A newer version of androidx.core:core-ktx than 1.12.0 is available: 1.19.0 [GradleDependency]
+    implementation("androidx.core:core-ktx:1.12.0")
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\build.gradle.kts:56: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.7.0 is available: 2.11.0 [GradleDependency]
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\build.gradle.kts:57: Warning: A newer version of androidx.lifecycle:lifecycle-service than 2.7.0 is available: 2.11.0 [GradleDependency]
+    implementation("androidx.lifecycle:lifecycle-service:2.7.0")
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\build.gradle.kts:58: Warning: A newer version of androidx.activity:activity-compose than 1.8.2 is available: 1.13.0 [GradleDependency]
+    implementation("androidx.activity:activity-compose:1.8.2")
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\build.gradle.kts:71: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-core than 1.8.0 is available: 1.9.0 [GradleDependency]
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\build.gradle.kts:72: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.8.0 is available: 1.9.0 [GradleDependency]
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\build.gradle.kts:73: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-play-services than 1.8.0 is available: 1.9.0 [GradleDependency]
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.0")
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\build.gradle.kts:76: Warning: A newer version of com.google.firebase:firebase-bom than 32.8.1 is available: 34.19.0 [GradleDependency]
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\build.gradle.kts:80: Warning: A newer version of com.google.android.gms:play-services-location than 21.2.0 is available: 21.4.0 [GradleDependency]
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\build.gradle.kts:90: Warning: A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0 [GradleDependency]
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\build.gradle.kts:91: Warning: A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0 [GradleDependency]
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\java\com\personal\familysafety\services\AssistanceMediaService.kt:281: Warning: Unnecessary; SDK_INT is always >= 26 [ObsoleteSdkInt]
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\java\com\personal\familysafety\services\LocationSharingService.kt:141: Warning: Unnecessary; SDK_INT is always >= 26 [ObsoleteSdkInt]
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "ObsoleteSdkInt":
+   This check flags version checks that are not necessary, because the
+   minSdkVersion (or surrounding known API level) is already at least as high
+   as the version checked for.
+
+   Similarly, it also looks for resources in -vNN folders, such as values-v14
+   where the version qualifier is less than or equal to the minSdkVersion,
+   where the contents should be merged into the best folder.
+
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\res\drawable\ic_stat_safety.xml:1: Warning: The resource R.drawable.ic_stat_safety appears to be unused [UnusedResources]
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+^
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\res\values\strings.xml:3: Warning: The resource R.string.notification_channel_name appears to be unused [UnusedResources]
+    <string name="notification_channel_name">Family Safety Streaming</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\res\values\strings.xml:4: Warning: The resource R.string.notification_channel_desc appears to be unused [UnusedResources]
+    <string name="notification_channel_desc">Shows ongoing transparent notifications when screen, camera, or location sharing is active.</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedResources":
+   Unused resources make applications larger and slow down builds.
+
+
+   The unused resource check can ignore tests. If you want to include
+   resources that are only referenced from tests, consider packaging them in a
+   test source set instead.
+
+   You can include test sources in the unused resource check by setting the
+   system property lint.unused-resources.include-tests =true, and to exclude
+   them (usually for performance reasons), use
+   lint.unused-resources.exclude-tests =true.
+   ,
+
+0 errors, 20 warnings

@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Family Safety Assistant</string>
+    <string name="notification_channel_name">Family Safety Streaming</string>
+    <string name="notification_channel_desc">Shows ongoing transparent notifications when screen, camera, or location sharing is active.</string>
+</resources>
