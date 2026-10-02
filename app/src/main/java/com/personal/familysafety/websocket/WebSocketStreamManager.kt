@@ -32,8 +32,9 @@ class WebSocketStreamManager private constructor() {
     }
 
     private var client: OkHttpClient = OkHttpClient.Builder()
-        .connectTimeout(10, TimeUnit.SECONDS)
+        .connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(0, TimeUnit.MILLISECONDS)
+        .writeTimeout(15, TimeUnit.SECONDS)
         .pingInterval(15, TimeUnit.SECONDS)
         .retryOnConnectionFailure(true)
         .build()
@@ -70,49 +71,66 @@ class WebSocketStreamManager private constructor() {
 
     fun connect(serverUrl: String, deviceId: String) {
         currentServerUrl = serverUrl.trim()
-        currentDeviceId = deviceId.trim()
+        currentDeviceId = deviceId.trim().ifEmpty { "child_device_001" }
         shouldReconnect = true
         reconnectAttempts = 0
 
+        // Disconnect existing before reconnecting
+        try {
+            webSocket?.close(1000, "Reconnecting")
+        } catch (_: Exception) {}
+        webSocket = null
+        isConnected.set(false)
+        isConnecting.set(false)
+
         startConnection()
+    }
+
+    private fun buildCleanWsUrl(inputUrl: String, deviceId: String): String {
+        var url = inputUrl.trim()
+
+        // Protocol normalize
+        if (url.startsWith("http://")) {
+            url = "ws://" + url.substring(7)
+        } else if (url.startsWith("https://")) {
+            url = "wss://" + url.substring(8)
+        } else if (!url.startsWith("ws://") && !url.startsWith("wss://")) {
+            url = "wss://$url"
+        }
+
+        // Strip existing queries
+        val baseWithoutQuery = if (url.contains("?")) url.substringBefore("?") else url
+        val cleanBase = baseWithoutQuery.trimEnd('/')
+
+        // Ensure /ws route
+        val routeUrl = if (!cleanBase.endsWith("/ws")) "$cleanBase/ws" else cleanBase
+
+        return "$routeUrl?deviceId=$deviceId&role=streamer"
     }
 
     private fun startConnection() {
         if (isConnecting.get() || isConnected.get()) return
 
-        var wsUrl = currentServerUrl
-        if (wsUrl.startsWith("http://")) {
-            wsUrl = "ws://" + wsUrl.substring(7)
-        } else if (wsUrl.startsWith("https://")) {
-            wsUrl = "wss://" + wsUrl.substring(8)
-        } else if (!wsUrl.startsWith("ws://") && !wsUrl.startsWith("wss://")) {
-            wsUrl = "wss://$wsUrl"
-        }
-
-        if (!wsUrl.contains("/ws")) {
-            wsUrl = wsUrl.trimEnd('/') + "/ws"
-        }
-        val fullUrl = if (wsUrl.contains("?")) {
-            "$wsUrl&deviceId=$currentDeviceId&role=streamer"
-        } else {
-            "$wsUrl?deviceId=$currentDeviceId&role=streamer"
-        }
-
+        val fullUrl = buildCleanWsUrl(currentServerUrl, currentDeviceId)
         isConnecting.set(true)
-        Log.i(TAG, "Connecting to WebSocket Media Relay: $fullUrl")
+        Log.i(TAG, "Initiating WebSocket connection to: $fullUrl")
 
         try {
+            val origin = if (fullUrl.startsWith("wss://")) "https://localhost" else "http://localhost"
             val request = Request.Builder()
                 .url(fullUrl)
+                .header("Origin", origin)
+                .header("User-Agent", "FamilySafetyAndroid/1.0 (Linux; Android 14)")
                 .build()
 
             webSocket = client.newWebSocket(request, object : okhttp3.WebSocketListener() {
                 override fun onOpen(ws: WebSocket, response: Response) {
-                    Log.i(TAG, "Connected to WebSocket Media Relay successfully!")
+                    Log.i(TAG, "🟢 Connected to WebSocket Relay! Code: ${response.code}")
                     isConnecting.set(false)
                     isConnected.set(true)
                     reconnectAttempts = 0
 
+                    // Send handshake registration payload
                     val regMsg = JsonObject().apply {
                         addProperty("type", "register")
                         addProperty("role", "streamer")
@@ -132,18 +150,24 @@ class WebSocketStreamManager private constructor() {
                 }
 
                 override fun onClosing(ws: WebSocket, code: Int, reason: String) {
+                    Log.w(TAG, "Server closing WebSocket: code=$code, reason=$reason")
                     ws.close(1000, null)
                 }
 
                 override fun onClosed(ws: WebSocket, code: Int, reason: String) {
+                    Log.w(TAG, "WebSocket Closed: code=$code, reason=$reason")
                     handleDisconnection(reason)
                 }
 
                 override fun onFailure(ws: WebSocket, t: Throwable, response: Response?) {
-                    handleDisconnection(t.message ?: "Connection error")
+                    val codeMsg = if (response != null) " HTTP ${response.code}: ${response.message}" else ""
+                    val errorDetail = "${t.javaClass.simpleName}: ${t.message}$codeMsg"
+                    Log.e(TAG, "❌ WebSocket Failure: $errorDetail", t)
+                    handleDisconnection(errorDetail)
                 }
             })
         } catch (e: Exception) {
+            Log.e(TAG, "Failed to create WebSocket request: ${e.message}", e)
             handleDisconnection(e.message ?: "Invalid URL")
         }
     }
@@ -157,6 +181,7 @@ class WebSocketStreamManager private constructor() {
                 "command" -> {
                     val action = json.get("action")?.asString ?: return
                     val payload = json.getAsJsonObject("payload")
+                    Log.i(TAG, "Received command: $action")
                     synchronized(listeners) {
                         listeners.forEach { listener ->
                             mainHandler.post { listener.onCommandReceived(action, payload) }
@@ -170,6 +195,9 @@ class WebSocketStreamManager private constructor() {
                         addProperty("timestamp", ts)
                     }
                     webSocket?.send(gson.toJson(pong))
+                }
+                "registered" -> {
+                    Log.i(TAG, "Streamer confirmed registered on relay.")
                 }
             }
         } catch (e: Exception) {
@@ -191,6 +219,7 @@ class WebSocketStreamManager private constructor() {
         if (shouldReconnect) {
             reconnectAttempts++
             val delayMs = (Math.min(reconnectAttempts * 2000, 15000)).toLong()
+            Log.d(TAG, "Scheduling reconnection attempt #$reconnectAttempts in ${delayMs}ms")
             mainHandler.postDelayed({
                 if (shouldReconnect && !isConnected.get()) {
                     startConnection()
@@ -240,7 +269,9 @@ class WebSocketStreamManager private constructor() {
 
     fun disconnect() {
         shouldReconnect = false
-        webSocket?.close(1000, "User stopped stream manager")
+        try {
+            webSocket?.close(1000, "User stopped stream manager")
+        } catch (_: Exception) {}
         webSocket = null
         isConnected.set(false)
         isConnecting.set(false)

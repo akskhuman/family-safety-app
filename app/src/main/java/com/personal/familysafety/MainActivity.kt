@@ -35,9 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import com.personal.familysafety.firebase.DeviceStateReporter
 import com.personal.familysafety.services.AssistanceMediaService
-import com.personal.familysafety.services.LocationSharingService
 import com.personal.familysafety.websocket.WebSocketStreamManager
 
 class MainActivity : ComponentActivity() {
@@ -92,7 +90,7 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         try {
             unregisterReceiver(screenPromptReceiver)
-        } catch (ignored: Exception) {}
+        } catch (_: Exception) {}
     }
 }
 
@@ -106,19 +104,28 @@ fun FamilySafetyDashboard(onRegisterLauncher: (() -> Unit) -> Unit) {
     }
 
     var wsUrl by remember {
-        mutableStateOf("wss://ais-dev-vfzytoext2ntavlnmspwe3-938514856930.asia-southeast1.run.app/ws")
+        mutableStateOf(
+            sharedPrefs.getString(
+                "ws_url",
+                "wss://ais-dev-vfzytoext2ntavlnmspwe3-938514856930.asia-southeast1.run.app/ws"
+            ) ?: "wss://ais-dev-vfzytoext2ntavlnmspwe3-938514856930.asia-southeast1.run.app/ws"
+        )
     }
 
-    var isWsConnected by remember { mutableStateOf(false) }
+    val wsManager = remember { WebSocketStreamManager.getInstance() }
+    var isWsConnected by remember { mutableStateOf(wsManager.isConnected()) }
     var isScreenStreaming by remember { mutableStateOf(false) }
     var isCameraStreaming by remember { mutableStateOf(false) }
 
-    val wsManager = remember { WebSocketStreamManager.getInstance() }
-
     DisposableEffect(Unit) {
         val listener = object : WebSocketStreamManager.WebSocketListener {
-            override fun onConnected() { isWsConnected = true }
-            override fun onDisconnected(reason: String) { isWsConnected = false }
+            override fun onConnected() {
+                isWsConnected = true
+                Toast.makeText(context, "🟢 Connected to Family Relay!", Toast.LENGTH_SHORT).show()
+            }
+            override fun onDisconnected(reason: String) {
+                isWsConnected = false
+            }
             override fun onCommandReceived(action: String, payload: com.google.gson.JsonObject?) {}
         }
         wsManager.addListener(listener)

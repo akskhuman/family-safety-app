@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:2:1-72:12
-INJECTED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:2:1-72:12
-INJECTED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:2:1-72:12
-INJECTED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:2:1-72:12
+ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:2:1-73:12
+INJECTED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:2:1-73:12
+INJECTED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:2:1-73:12
+INJECTED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:2:1-73:12
 MERGED from [com.google.android.gms:play-services-location:21.2.0] C:\Users\AKSPC\.gradle\caches\transforms-3\9589b574ab0a4d92ca917472c1cfbc18\transformed\jetified-play-services-location-21.2.0\AndroidManifest.xml:2:1-9:12
 MERGED from [com.google.firebase:firebase-database-ktx:20.3.1] C:\Users\AKSPC\.gradle\caches\transforms-3\18f80244bd11d46f77fcef35f5fbe661\transformed\jetified-firebase-database-ktx-20.3.1\AndroidManifest.xml:2:1-18:12
 MERGED from [com.google.firebase:firebase-database:20.3.1] C:\Users\AKSPC\.gradle\caches\transforms-3\dea167866f83576933096b20efacc3fe\transformed\jetified-firebase-database-20.3.1\AndroidManifest.xml:15:1-38:12
@@ -162,8 +162,8 @@ ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\Androi
 	android:name
 		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:34:19-63
 application
-ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:36:5-71:19
-INJECTED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:36:5-71:19
+ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:36:5-72:19
+INJECTED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:36:5-72:19
 MERGED from [com.google.android.gms:play-services-location:21.2.0] C:\Users\AKSPC\.gradle\caches\transforms-3\9589b574ab0a4d92ca917472c1cfbc18\transformed\jetified-play-services-location-21.2.0\AndroidManifest.xml:7:5-20
 MERGED from [com.google.android.gms:play-services-location:21.2.0] C:\Users\AKSPC\.gradle\caches\transforms-3\9589b574ab0a4d92ca917472c1cfbc18\transformed\jetified-play-services-location-21.2.0\AndroidManifest.xml:7:5-20
 MERGED from [com.google.firebase:firebase-database-ktx:20.3.1] C:\Users\AKSPC\.gradle\caches\transforms-3\18f80244bd11d46f77fcef35f5fbe661\transformed\jetified-firebase-database-ktx-20.3.1\AndroidManifest.xml:8:5-16:19
@@ -207,53 +207,55 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\AKSPC\.gradle\cach
 	android:roundIcon
 		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:40:9-63
 	tools:targetApi
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:43:9-29
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:44:9-29
 	android:icon
 		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:38:9-58
 	android:allowBackup
 		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:37:9-35
 	android:theme
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:42:9-56
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:43:9-56
+	android:usesCleartextTraffic
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:42:9-44
 activity#com.personal.familysafety.MainActivity
-ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:46:9-55:20
+ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:47:9-56:20
 	android:label
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:49:13-45
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:50:13-45
 	android:exported
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:48:13-36
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:49:13-36
 	android:theme
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:50:13-60
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:51:13-60
 	android:name
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:47:13-41
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:48:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:51:13-54:29
+ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:52:13-55:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:52:17-69
+ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:53:17-69
 	android:name
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:52:25-66
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:53:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:53:17-77
+ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:54:17-77
 	android:name
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:53:27-74
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:54:27-74
 service#com.personal.familysafety.services.AssistanceMediaService
-ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:58:9-62:81
+ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:59:9-63:81
 	android:enabled
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:60:13-35
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:61:13-35
 	android:exported
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:61:13-37
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:62:13-37
 	android:foregroundServiceType
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:62:13-78
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:63:13-78
 	android:name
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:59:13-60
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:60:13-60
 service#com.personal.familysafety.services.LocationSharingService
-ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:65:9-69:56
+ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:66:9-70:56
 	android:enabled
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:67:13-35
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:68:13-35
 	android:exported
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:68:13-37
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:69:13-37
 	android:foregroundServiceType
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:69:13-53
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:70:13-53
 	android:name
-		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:66:13-60
+		ADDED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml:67:13-60
 uses-sdk
 INJECTED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\AKSPC\AndroidStudioProjects\familysafety\app\src\main\AndroidManifest.xml
